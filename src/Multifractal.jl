@@ -4,15 +4,15 @@ module Multifractal
 
 using Vega
 
-function start()
-    println("Hello multifractal world!");
+function ChhabraJansen(ASCIIString::inputfile,ASCIIString::extensionDq,ASCIIString::extensionFa,Float64::initialQ,Float64::finalQ,Float64::dq,Int64::Np,Float64::r2dq,Float64::r2fa,Int64::typeofoutput,Int64::scalesToRemove)
+    println("Chhabra-Jansen multifractal method!");
 end
 
-function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
+function fitting(Array{Float64,1}::vx, Array{Float64,1}::vy, Int64::N)
     println("Fitting function");
 end
 
-function calc_SumM(x::Array{Float64,1},y::Array{Float64,1},Ei::Float64,Ef::Float64,N::Int64)
+function calcSumM(Array{Float64,1}::x,Array{Float64,1}::y,Float64::Ei,Float64::Ef,Int64::N)
     println("calcSum function");
 end
 
