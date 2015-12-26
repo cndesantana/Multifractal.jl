@@ -1,7 +1,7 @@
 /* Programa para cálculo do espectro
 multifractal de dados porosimetria utilizando
 o método de Chhabra e Jansen	*/
-
+//Author: Jose Garcia Vivas Miranda
 #include <malloc.h>
 #include <math.h>
 #include <stdio.h>
