@@ -1,6 +1,6 @@
 # version 0.1
 
-module multifractal 
+module Multifractal 
 
 using Vega
 

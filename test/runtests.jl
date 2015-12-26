@@ -1,7 +1,7 @@
-using multifractal 
+using Multifractal 
 
 function main()
-    multifractal.start();
+    Multifractal.start();
 end
 
 main();
