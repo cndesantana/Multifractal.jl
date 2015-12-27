@@ -1,7 +1,8 @@
 using Multifractal 
 
-function main()
-    Multifractal.start();
+function main(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, initialQ::Float64, finalQ::Float64, dq::Float64, Np::Int64, r2dq::Float64, r2fa::Float64, scalesToRemove::Int64)
+    Multifractal.ChhabraJansen(inputfile,extensionDq,extensionFa,initialQ,finalQ,dq,Np,r2dq,r2fa,scalesToRemove)
 end
 
-main();
+#main(ARGS[1],ARGS[2],ARGS[3],parse(Float64,ARGS[4]),parse(Float64,ARGS[5]),parse(Float64,ARGS[6]),parse(Int,ARGS[7]),parse(Float64,ARGS[8]),parse(Float64,ARGS[9]),parse(Int,ARGS[10]));
+main("series.txt","tdq","tfa",-5,5,1,9,-1,-1,0);
