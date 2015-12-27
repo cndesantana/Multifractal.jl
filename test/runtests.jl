@@ -1,6 +1,6 @@
 using Multifractal 
 
-function main(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, initialQ::Float64, finalQ::Float64, dq::Float64, Np::Int64, r2dq::Float64, r2fa::Float64, scalesToRemove::Int64)
+function main(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, initialQ::Float64, finalQ::Float64, dq::Float64, Np::Int32, r2dq::Float64, r2fa::Float64, scalesToRemove::Int32)
     Multifractal.ChhabraJansen(inputfile, extensionDq, extensionFa, initialQ, finalQ, dq, Np, r2dq, r2fa, scalesToRemove)
 end
 
