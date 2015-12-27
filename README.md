@@ -1,5 +1,5 @@
 # Multifractal.jl
-Library to calculate the multifractal spectrum of time series
+Julia Library with different methods to calculate the multifractal spectrum of time series
 
 
   ```
