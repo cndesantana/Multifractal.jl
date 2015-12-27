@@ -5,6 +5,4 @@ Julia Library with different methods to calculate the multifractal spectrum of t
   ```
   julia> using Multifractal
 
-  julia> Multifractal.start()
-
   ```
