@@ -194,8 +194,8 @@ function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
     sb = sqrt( (sx2*sa)/(N*sx2-sx*sx) );
     sa = sqrt( (N*sa)/(N*sx2-sx*sx) );
 
-    if(fabs(ry)<1.0e-10)
-        if(fabs(a)<1.0e-10) 
+    if(abs(ry)<1.0e-10)
+        if(abs(a)<1.0e-10) 
             r = 1.0;
         else 
             r = 30000.0;
