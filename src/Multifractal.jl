@@ -15,6 +15,11 @@ function MFDMA()
 end
 
 function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, RmDq::Float64, RmFa::Float64, Io::Int64)
+    struct Hstc {
+        double sl,sd,r,in,ea,eb;
+    };
+
+    struct Hstc FDq, FAq,FFq;
     D2=D1=RD1=RD2=ED1=ED2=-1;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
     NFout = Chext(inputfile,extensionDq);
@@ -87,9 +92,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             y = 0;
         end
 
-        FAq = Fitting(e,Ma,Np);
-        FFq = Fitting(e,Mf,Np);
-        FDq = Fitting(e,Md[round(Int,(q-Qi)/dq)+1,:],Np);
+        FAq = fitting(e,Ma,Np);
+        FFq = fitting(e,Mf,Np);
+        FDq = fitting(e,Md[round(Int,(q-Qi)/dq)+1,:],Np);
         if( (1-dq/2) < q < (1+dq/2) )
             Dq = FDq.sl;
         else 
