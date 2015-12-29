@@ -239,20 +239,20 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
 #;    // Begins the "thing"
     I=Io;			#// Initial partition, for I=1 the mi(Epson) finalize with Epson=1/2
 
-    println("DEBUG: (MinY, MaxY, SomaY) = ($MinY, $MaxY, $SomaY)");
-
     for(q in Qi:dq:Qf)
+        Md = zeros(round(Int,((Qf-Qi)/dq)+1),Np+1);
+        Ma = zeros(Np+1);
+        Mf = zeros(Np+1);
         for(k in I:Np)						#// Loop for partition numbers
 #            println("k = $k");
             Nor=0.0::Float64;
             m=0.0::Float64;
             Pr=0::Int64;
-            Pr = 2^k;
+            Pr = 2^(k-1);
             E = 1.0/Pr;						#// Size of each partition
             mye[k-I+1] = log10(E);
             pos = k-I+1;
             val = mye[pos];
-            println("DEBUG: e[$pos] = $val");
 
             for(i in 1:Pr)						#// To estimate f(alfa)
 #                println("i1 = $i");
@@ -261,7 +261,6 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
                     Nor += m^q;
                 end
             end
-            println("DEBUG: Nor = $Nor");
             
             for(i in 1:Pr) #// loop for scan over the partition
 #                println("i2 = $i");
@@ -275,14 +274,14 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
                     end
                     mq = (m^q)/Nor;					#// To estimate f(alfa)
                     currentval = Ma[k-I+1]::Float64;
+                    pos2 = k-I+1;
                     setindex!(Ma,currentval + mq*log10(m),k-I+1);
+                    val2 = Ma[k-I+1]; 
+
                     currentval = Mf[k-I+1]::Float64;
                     setindex!(Mf,currentval + mq*log10(mq),k-I+1);
-                end
-            end
-            pos2 = k-I+1;
-            val2 = Ma[k-I+1]; 
-            println("DEBUG: Ma[$pos2] = $val2");
+                end #end-if
+            end #end-for
 
             if(! ((1-dq/2) < q < (1+dq/2)) )
                 setindex!(Md,log10(Md[round(Int,(q-Qi)/dq)+1,k-I+1]),round(Int,(q-Qi)/dq)+1,k-I+1); #// if q!=1

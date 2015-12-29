@@ -125,8 +125,6 @@ int main(int argc, char **argv)
     // Begins the "thing"
     I=Io;			// Initial partition, for I=1 the mi(Epson) finalize with Epson=1/2
 
-    printf("DEBUG: (MinY, MaxY, SomaY) = (%f, %f, %f)\n",MinY, MaxY, SomaY);
-
     for(q=Qi;q<=Qf;q+=dq)
     {
         //printf("%g \n",q);
@@ -140,13 +138,11 @@ int main(int argc, char **argv)
             E=(double)1.0/Pr;						// Size of each partition
             e[k-I]=log10(1.0/Pr);
 
-            printf("DEBUG: e[%d] = %f\n", k-I, e[k-I]);
             for(i=1;i<=Pr;i++)						// To estimate f(alfa)
             {
                 m=calc_SumM(x,y,(i-1)*E,i*E,N)/SomaY;
                 if(m)Nor+=pow(m,q);
             }
-            printf("DEBUG: Nor = %f\n", Nor);
 
             for(i=1;i<=Pr;i++)			// loop for scan over the partition
             {
@@ -158,13 +154,12 @@ int main(int argc, char **argv)
 
                 mq=pow(m,q);					// To estimate f(alfa)
                 mq/=Nor;
+
                 Ma[k-I]+=mq*log10(m);
                 Mf[k-I]+=mq*log10(mq);
             }
-            printf("DEBUG: Ma[%d] = %f\n", k-I, Ma[k-i]);
             if(q==0)
                 int y=0;
-
 
             if(! (q>(1-dq/2) && q<(1+dq/2)) )
                 Md[(int)((q-Qi)/dq)][k-I]= log10(Md[(int)((q-Qi)/dq)][k-I]); // if q!=1
