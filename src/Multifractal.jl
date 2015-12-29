@@ -14,6 +14,23 @@ type Hstc
 end
 Hstc(sl,sd,r,in,ea,eb) = Hstc(sl,sd,r,in,ea,eb);
 
+function printPartitionFunction(FoutTau::IOStream, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, mye::Array{Float64,1}, Md::Array{Float64,2})
+
+    writedlm(FoutTau,["Scale"]);
+    for(q in Qi:dq:Qf) 
+       writedlm(FoutTau,[q],' ');
+    end
+    writedlm(FoutTau,["\n"]);
+    for(k in 1:Np)
+        writedlm(FoutTau,[mye[k]],' ');
+        for(q in Qi:dq:Qf) 
+            writedlm(FoutTau,[Md[round(Int,(q-Qi)/dq)+1,k]],' ');
+        end
+        writedlm(FoutTau,["\n"]);
+    end
+    writedlm(FoutTau,["\n"]);
+end
+
 function Chext(filename,extension)
     return(split(filename,'.')[1]*"."*extension);
 end
@@ -73,7 +90,7 @@ function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Flo
     return ret;
 end
     
-function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float64, q::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
+function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64, dq::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
     AlphaMin=999;  
     AlphaMax=-999; 
     QAlphaMax=-999;
@@ -141,7 +158,7 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float6
           EDqmx = EDq;
           RDqmx = FDq.r;
        end
-       if(Dq < Dqmn)                                                                                                
+       if(Dq < Dqmn)           
           Dqmn = Dq;
           qMin = q;
           EDqmn = EDq;
@@ -163,23 +180,25 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float6
            ED2 = EDq;
        end
     end
+
     return AlphaMin, AlphaMax, QAlphaMax, QAlphaMin, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAlphaMin, RAlphaMin, EAlphaMax, RAlphaMax, D0, RD0, ED0, D1, RD1, ED1, D2, RD2, ED2, Alpha0, EAlpha0, RAlpha0
 
 end
 
 function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, RmDq::Float64, RmFa::Float64, Io::Int64)
     
-    
     NFout = Chext(inputfile,extensionDq);
     NFoutFA = Chext(inputfile,extensionFa);
+    NFoutTau = Chext(inputfile,"tau");
     Fout = open(NFout,"w+");
     FoutFa = open(NFoutFA,"w+");
+    FoutTau = open(NFoutTau,"w+");
 
 #;#    /* Fix the size of the file, the maximum and minimum */
     Md = zeros(round(Int,((Qf-Qi)/dq)+1),Np+1);
     Ma = zeros(Np+1);
     Mf = zeros(Np+1);
-    e = zeros(Np+1);
+    mye = zeros(Np+1);
 
 #;#    /* Load data  */
     data = readdlm(inputfile,' ');
@@ -203,7 +222,7 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             Pr=0::Int64;
             Pr = 2^k;
             E = 1.0/Pr;						#// Size of each partition
-            e[k-I+1] = log10(E);
+            mye[k-I+1] = log10(E);
 
             for(i in 1:Pr)						#// To estimate f(alfa)
                 println("i1 = $i");
@@ -236,9 +255,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             end        
         end        
 
-        FAq = fitting(e,Ma,Np);
-        FFq = fitting(e,Mf,Np);
-        FDq = fitting(e,Md'[:,round(Int,(q-Qi)/dq)+1],Np);
+        FAq = fitting(mye,Ma,Np);
+        FFq = fitting(mye,Mf,Np);
+        FDq = fitting(mye,Md'[:,round(Int,(q-Qi)/dq)+1],Np);
         if( (1-dq/2) < q < (1+dq/2) )
             Dq = FDq.sl::Float64;
         else 
@@ -246,10 +265,12 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             FDq.sd /= abs(q-1);
         end
 
-        AlphaMin, AlphaMax, QAlphaMax, QAlphaMin, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAlphaMin, RAlphaMin, EAlphaMax, RAlphaMax, D0, RD0, ED0, D1, RD1, ED1, D2, RD2, ED2, Alpha0, EAlpha0, RAlpha0 = getMultifractalCoefficients(FAq, FFq, FDq, dq, q, Dq, RmFa, RmDq, Fout, FoutFa);
-
+        AlphaMin, AlphaMax, QAlphaMax, QAlphaMin, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAlphaMin, RAlphaMin, EAlphaMax, RAlphaMax, D0, RD0, ED0, D1, RD1, ED1, D2, RD2, ED2, Alpha0, EAlpha0, RAlpha0 = getMultifractalCoefficients(FAq, FFq, FDq, q, dq, Dq, RmFa, RmDq, Fout, FoutFa);
+        writedlm(STDOUT,[inputfile qMin qMax Dqmn EDqmn RDqmn Dqmx EDqmx RDqmx D0 ED0 RD0 D1 ED1 RD1 D2 ED2 RD2 QAlphaMin QAlphaMax Alpha0 EAlpha0 RAlpha0 AlphaMax EAlphaMax RAlphaMax AlphaMin EAlphaMin RAlphaMin Fmn Fmx],'\t');
     end
-    writedlm(STDOUT,[inputfile qMin qMax Dqmn EDqmn RDqmn Dqmx EDqmx RDqmx D0 ED0 RD0 D1 ED1 RD1 D2 ED2 RD2 QAlphaMin QAlphaMax Alpha0 EAlpha0 RAlpha0 AlphaMax EAlphaMax RAlphaMax AlphaMin EAlphaMin RAlphaMin Fmn Fmx],'\t');
+
+    printPartitionFunction(FoutTau, Qi, Qf, dq, Np, mye, Md);
+
 
     println("Chhabra-Jansen multifractal method!");
 end
