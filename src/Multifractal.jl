@@ -238,6 +238,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
 #;############################# To change from here on
 #;    // Begins the "thing"
     I=Io;			#// Initial partition, for I=1 the mi(Epson) finalize with Epson=1/2
+
+    println("DEBUG: (MinY, MaxY, SomaY) = ($MinY, $MaxY, $SomaY)");
+
     for(q in Qi:dq:Qf)
         for(k in I:Np)						#// Loop for partition numbers
 #            println("k = $k");
@@ -247,6 +250,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             Pr = 2^k;
             E = 1.0/Pr;						#// Size of each partition
             mye[k-I+1] = log10(E);
+            pos = k-I+1;
+            val = mye[pos];
+            println("DEBUG: e[$pos] = $val");
 
             for(i in 1:Pr)						#// To estimate f(alfa)
 #                println("i1 = $i");
@@ -255,6 +261,7 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
                     Nor += m^q;
                 end
             end
+            println("DEBUG: Nor = $Nor");
             
             for(i in 1:Pr) #// loop for scan over the partition
 #                println("i2 = $i");
@@ -273,6 +280,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
                     setindex!(Mf,currentval + mq*log10(mq),k-I+1);
                 end
             end
+            pos2 = k-I+1;
+            val2 = Ma[k-I+1]; 
+            println("DEBUG: Ma[$pos2] = $val2");
 
             if(! ((1-dq/2) < q < (1+dq/2)) )
                 setindex!(Md,log10(Md[round(Int,(q-Qi)/dq)+1,k-I+1]),round(Int,(q-Qi)/dq)+1,k-I+1); #// if q!=1
