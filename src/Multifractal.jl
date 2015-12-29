@@ -73,43 +73,48 @@ function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Flo
     return ret;
 end
     
-function getMaxMinFitting(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float64, q::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
-    Amn=999;  
-    Amx=-999; 
-    Aqmx=-999;
-    Aqmn=999;
+function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float64, q::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
+    AlphaMin=999;  
+    AlphaMax=-999; 
+    QAlphaMax=-999;
+    QAlphaMin=999;
     Fmx=-999; 
     Fmn=999;  
     Dqmx=-999.9;
     Dqmn= 999.9;
 
-    qMin::Float64;
-    qMax::Float64;
-    EDqmn::Float64;
-    RDqmn::Float64;
-    EDqmx::Float64;
-    RDqmx::Float64;
-    EAmn::Float64;
-    RAmn::Float64;	#// Alfa minimo, erro e r2
-    EAmx::Float64;
-    RAmx::Float64;	#// Alfa maximo, erro e r2
-    myDo::Float64;
-    RDo::Float64;
-    EDo::Float64;
+    qMin=0.0::Float64;
+    qMax=0.0::Float64;
+    EDqmn=0.0::Float64;
+    RDqmn=0.0::Float64;
+    EDqmx=0.0::Float64;
+    RDqmx=0.0::Float64;
+    EAlphaMin=0.0::Float64;
+    RAlphaMin=0.0::Float64;	#// Alfa minimo, erro e r2
+    EAlphaMax=0.0::Float64;
+    RAlphaMax=0.0::Float64;	#// Alfa maximo, erro e r2
+    D0=0.0::Float64;
+    RD0=0.0::Float64;
+    ED0=0.0::Float64;
+    Alpha0=0.0::Float64; 
+    EAlpha0=0.0::Float64;
+    RAlpha0=0.0::Float64;
+
+    D2=D1=RD1=RD2=ED1=ED2=-1;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
     if((FAq.r >= RmFa) && (FFq.r >= RmFa))
        writedlm(FoutFa,[FAq.sl FAq.sd FAq.r FFq.sl FFq.sd FFq.r],' ');
-       if(FAq.sl > Amx) 
-           Amx = FAq.sl;
-           EAmx = FAq.sd;
-           RAmx = FAq.r;
-           Aqmx = q;
+       if(FAq.sl > AlphaMax) 
+           AlphaMax = FAq.sl;
+           EAlphaMax = FAq.sd;
+           RAlphaMax = FAq.r;
+           QAlphaMax = q;
        end 
-       if(FAq.sl < Amn) 
-           Amn = FAq.sl;
-           EAmn = FAq.sd;
-           RAmn = FAq.r;
-           Aqmn = q;
+       if(FAq.sl < AlphaMin) 
+           AlphaMin = FAq.sl;
+           EAlphaMin = FAq.sd;
+           RAlphaMin = FAq.r;
+           QAlphaMin = q;
        end 
        if(FFq.sl < Fmn) 
            Fmn = FFq.sl;
@@ -118,9 +123,9 @@ function getMaxMinFitting(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float64, q::Float
            Fmx = FFq.sl;
        end 
        if((0-dq/2) < q <(0+dq/2))
-           ao = FAq.sl;
-           EAo = FAq.sd;
-           RAo = FAq.r;
+           Alpha0 = FAq.sl;
+           EAlpha0 = FAq.sd;
+           RAlpha0 = FAq.r;
        end 
     end 
     if(FDq.r >= RmDq)
@@ -143,9 +148,9 @@ function getMaxMinFitting(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float64, q::Float
           RDqmn = FDq.r;
        end
        if((0-dq/2) < q < (0+dq/2))
-           myDo = Dq;
-           RDo = FDq.r;
-           EDo = EDq;
+           D0 = Dq;
+           RD0 = FDq.r;
+           ED0 = EDq;
        end
        if((1-dq/2) < q < (1+dq/2))
            D1 = Dq;
@@ -158,14 +163,13 @@ function getMaxMinFitting(FAq::Hstc, FFq::Hstc, FDq::Hstc, dq::Float64, q::Float
            ED2 = EDq;
        end
     end
-    return Amn, Amx, Aqmx, Aqmn, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAmn, RAmn, EAmx, RAmx, myDo, RDo, EDo
+    return AlphaMin, AlphaMax, QAlphaMax, QAlphaMin, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAlphaMin, RAlphaMin, EAlphaMax, RAlphaMax, D0, RD0, ED0, D1, RD1, ED1, D2, RD2, ED2, Alpha0, EAlpha0, RAlpha0
 
 end
 
 function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, RmDq::Float64, RmFa::Float64, Io::Int64)
     
-    D2=D1=RD1=RD2=ED1=ED2=-1;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
-
+    
     NFout = Chext(inputfile,extensionDq);
     NFoutFA = Chext(inputfile,extensionFa);
     Fout = open(NFout,"w+");
@@ -242,9 +246,10 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             FDq.sd /= abs(q-1);
         end
 
-        Amn, Amx, Aqmx, Aqmn, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAmn, RAmn, EAmx, RAmx, myDo, RDo, EDo = getMaxMinFitting(FAq, FFq, FDq, dq, q, Dq, RmFa, RmDq, Fout, FoutFa);
-        writedlm(STDOUT,[inputfile qMin qMax Dqmn EDqmn RDqmn Dqmx EDqmx RDqmx myDo EDo RDo D1 ED1 RD1 D2 ED2 RD2 Aqmn Aqmx ao EAo RAo Amx EAmx RAmx Amn EAmn RAmn Fmn Fmx],'\t');
+        AlphaMin, AlphaMax, QAlphaMax, QAlphaMin, Fmx, Fmn, Dqmx, Dqmn, qMin, qMax, EDqmx, RDqmx, EDqmn, RDqmn, EAlphaMin, RAlphaMin, EAlphaMax, RAlphaMax, D0, RD0, ED0, D1, RD1, ED1, D2, RD2, ED2, Alpha0, EAlpha0, RAlpha0 = getMultifractalCoefficients(FAq, FFq, FDq, dq, q, Dq, RmFa, RmDq, Fout, FoutFa);
+
     end
+    writedlm(STDOUT,[inputfile qMin qMax Dqmn EDqmn RDqmn Dqmx EDqmx RDqmx D0 ED0 RD0 D1 ED1 RD1 D2 ED2 RD2 QAlphaMin QAlphaMax Alpha0 EAlpha0 RAlpha0 AlphaMax EAlphaMax RAlphaMax AlphaMin EAlphaMin RAlphaMin Fmn Fmx],'\t');
 
     println("Chhabra-Jansen multifractal method!");
 end
