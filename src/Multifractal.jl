@@ -20,14 +20,14 @@ function printPartitionFunction(FoutTau::IOStream, Qi::Float64, Qf::Float64, dq:
     for(q in Qi:dq:Qf) 
        line = string(line," ",q);
     end
-    println(FoutTau,line);
+    writedlm(FoutTau,[line],' ');
 
     for(k in 1:Np)
         line = string(mye[k]);
         for(q in Qi:dq:Qf) 
             line = string(line," ",Md[round(Int,(q-Qi)/dq)+1,k]);
         end
-        println(FoutTau,line);
+        writedlm(FoutTau,[line],' ');
     end
 end
 
@@ -42,7 +42,6 @@ function MFDMA()
 end
 
 function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
-#    println("Fitting function");
 
     sx = sum(vx);
     sy = sum(vy);
@@ -183,14 +182,16 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64
 
 end
 
-function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, RmDq::Float64, RmFa::Float64, Io::Int64)
+function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, x::Array{Float64,1}, y::Array{Float64,1}, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, RmDq::Float64, RmFa::Float64, Io::Int64)
     
     NFout = Chext(inputfile,extensionDq);
     NFoutFA = Chext(inputfile,extensionFa);
-    NFoutTau = Chext(inputfile,"tau");
+    NFoutTau = Chext(inputfile,extensionTau);
+    NFoutSumm = "summaryDq.dat";
     Fout = open(NFout,"w+");
     FoutFa = open(NFoutFA,"w+");
     FoutTau = open(NFoutTau,"w+");
+    FoutSumm = open(NFoutSumm,"a+");
 
     AlphaMin=999;  
     AlphaMax=-999; 
@@ -224,11 +225,7 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
     Mf = zeros(Np+1);
     mye = zeros(Np+1);
 
-#;#    /* Load data  */
-    data = readdlm(inputfile,' ');
-    N = length(data[:,1]);
-    x = data[:,1];
-    y = data[:,2];
+    N = length(y);
     MaxY = maximum(y);
     MaxX = maximum(x);
     MinY = minimum(y);
@@ -244,7 +241,6 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
         Ma = zeros(Np+1);
         Mf = zeros(Np+1);
         for(k in I:Np)						#// Loop for partition numbers
-#            println("k = $k");
             Nor=0.0::Float64;
             m=0.0::Float64;
             Pr=0::Int64;
@@ -255,7 +251,6 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             val = mye[pos];
 
             for(i in 1:Pr)						#// To estimate f(alfa)
-#                println("i1 = $i");
                 m = calcSumM(x,y,(i-1)*E,i*E,N)/SomaY;
                 if(m!=0)
                     Nor += m^q;
@@ -263,7 +258,6 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             end
             
             for(i in 1:Pr) #// loop for scan over the partition
-#                println("i2 = $i");
                 m = calcSumM(x,y,(i-1)*E,i*E,N)/SomaY;
                 if(m!=0)		        #// Evita divergencias de medidas nulas
                     currentval = Md[round(Int,(q-Qi)/dq)+1,k-I+1]::Float64;
@@ -363,9 +357,13 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
         end
     end
 
-    writedlm(STDOUT,[inputfile qMin qMax Dqmn EDqmn RDqmn Dqmx EDqmx RDqmx D0 ED0 RD0 D1 ED1 RD1 D2 ED2 RD2 QAlphaMin QAlphaMax Alpha0 EAlpha0 RAlpha0 AlphaMax EAlphaMax RAlphaMax AlphaMin EAlphaMin RAlphaMin Fmn Fmx],'\t');
+    writedlm(FoutSumm,[inputfile qMin qMax Dqmn EDqmn RDqmn Dqmx EDqmx RDqmx D0 ED0 RD0 D1 ED1 RD1 D2 ED2 RD2 QAlphaMin QAlphaMax Alpha0 EAlpha0 RAlpha0 AlphaMax EAlphaMax RAlphaMax AlphaMin EAlphaMin RAlphaMin Fmn Fmx],'\t');
 
     printPartitionFunction(FoutTau, Qi, Qf, dq, Np, mye, Md);
+    close(Fout);
+    close(FoutFa);
+    close(FoutTau);
+    close(FoutSumm);
 end
 
 #Write the functions here
