@@ -1,5 +1,11 @@
 # Multifractal.jl
-This library consists in a collection of different methods to calculate the multifractal variables of time series. The library presents methods for the following approaches:
+This library consists in a collection of different methods to calculate the multifractal variables of time series. 
+
+To install Multifractal.jl you can open a Julia terminal and run the command:
+
+        Pkg.clone("https://github.com/cndesantana/Multifractal.jl.git")
+
+The library presents methods for the following approaches:
 
 1 - Chhabra-Jensen method
 
