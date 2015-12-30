@@ -17,14 +17,14 @@ Hstc(sl,sd,r,in,ea,eb) = Hstc(sl,sd,r,in,ea,eb);
 function printPartitionFunction(FoutTau::IOStream, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, mye::Array{Float64,1}, Md::Array{Float64,2})
 
     line = "Scale";
-    for(q in Qi:dq:Qf) 
+    @inbounds @simd for(q in Qi:dq:Qf) 
        line = string(line," ",q);
     end
     writedlm(FoutTau,[line],' ');
 
-    for(k in 1:Np)
+    @inbounds @simd for(k in 1:Np)
         line = string(mye[k]);
-        for(q in Qi:dq:Qf) 
+        @inbounds @simd for(q in Qi:dq:Qf) 
             line = string(line," ",Md[round(Int,(q-Qi)/dq)+1,k]);
         end
         writedlm(FoutTau,[line],' ');
@@ -264,11 +264,11 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
 #;    // Begins the "thing"
     I=Io;			#// Initial partition, for I=1 the mi(Epson) finalize with Epson=1/2
 
-    for(q in Qi:dq:Qf)
+        @inbounds @simd for(q in Qi:dq:Qf)
         Md = zeros(round(Int,((Qf-Qi)/dq)+1),Np+1);
         Ma = zeros(Np+1);
         Mf = zeros(Np+1);
-        for(k in I:Np)						#// Loop for partition numbers
+        @inbounds @simd for(k in I:Np)						#// Loop for partition numbers
             Nor=0.0::Float64;
             m=0.0::Float64;
             Pr=0::Int64;
@@ -278,14 +278,14 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             pos = k-I+1;
             val = mye[pos];
 
-            for(i in 1:Pr)						#// To estimate f(alfa)
+            @inbounds @simd for(i in 1:Pr)						#// To estimate f(alfa)
                 m = calcSumM(x,y,(i-1)*E,i*E,N)/SomaY;
                 if(m!=0)
                     Nor += m^q;
                 end
             end
             
-            for(i in 1:Pr) #// loop for scan over the partition
+            @inbounds @simd for(i in 1:Pr) #// loop for scan over the partition
                 m = calcSumM(x,y,(i-1)*E,i*E,N)/SomaY;
                 if(m!=0)		        #// Evita divergencias de medidas nulas
                     currentval = Md[round(Int,(q-Qi)/dq)+1,k-I+1]::Float64;
