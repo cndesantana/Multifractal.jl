@@ -43,6 +43,15 @@ end
 
 function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
 
+    for x = [:s,:sx,:sy,:sx2,:sxy,:sy2,:a,:b,:r,:rx,:ry,:w,:sa,:sb]
+        @eval $x = Float64;
+    end
+    sx=0.0;
+    sy=0.0;
+    sx2=0.0;
+    sxy=0.0;
+    sy2=0.0;
+
     sx = sum(vx);
     sy = sum(vy);
     sxy = sum(vx.*vy);
@@ -100,12 +109,12 @@ function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Flo
 end 
  
 function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64, dq::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
-    AlphaMin=999;  
-    AlphaMax=-999; 
-    QAlphaMax=-999;
-    QAlphaMin=999;
-    Fmx=-999; 
-    Fmn=999;  
+    AlphaMin=999.0;  
+    AlphaMax=-999.0; 
+    QAlphaMax=-999.0;
+    QAlphaMin=999.0;
+    Fmx=-999.0; 
+    Fmn=999.0;  
     Dqmx=-999.9;
     Dqmn= 999.9;
     qMin=0.0::Float64;
@@ -124,7 +133,7 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64
     Alpha0=0.0::Float64; 
     EAlpha0=0.0::Float64;
     RAlpha0=0.0::Float64;
-    D2=D1=RD1=RD2=ED1=ED2=-1;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
+    D2=D1=RD1=RD2=ED1=ED2=-1.0;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
     if((FAq.r >= RmFa) && (FFq.r >= RmFa))
        writedlm(FoutFa,[FAq.sl FAq.sd FAq.r FFq.sl FFq.sd FFq.r],' ');
