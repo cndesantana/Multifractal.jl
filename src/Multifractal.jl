@@ -80,7 +80,7 @@ function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
 end
 
 function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Float64, N::Int64)
-    ret::Float64 = 0;
+    ret=0.0::Float64;
     for(i in 1:N)
         if( Ei < x[i] <= Ef)
             ret += y[i];
