@@ -79,7 +79,7 @@ function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
     return Hstc(a,w,r,b,sa,sb)
 end
 
-function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Float64, N::Int64)
+function calcSumM2(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Float64, N::Int64)
     ret=0.0::Float64;
     for(i in 1:N)
         if( Ei < x[i] <= Ef)
@@ -88,7 +88,17 @@ function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Flo
     end
     return ret;
 end
-    
+   
+function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Float64, N::Int64)
+    mysum=0.0::Float64;
+    i=1
+    @inbounds while i<=N && x[i]<=Ei i+=1 ; end
+    j=i
+    @inbounds while j<=N && x[j]<=Ef j+=1 ; end
+    @inbounds @simd for k=i:(j-1) mysum += y[k] ; end
+    return(mysum);
+end 
+ 
 function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64, dq::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
     AlphaMin=999;  
     AlphaMax=-999; 
