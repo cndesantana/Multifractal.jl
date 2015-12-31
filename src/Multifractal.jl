@@ -46,21 +46,21 @@ function MFDMA(x,n_min,n_max,N,theta,q)
 
 # To build a cumulative sum of the vector y
 
-y = cumsum(x);
+	y = cumsum(x);
 
-for (i in 1:length(n))
+	for (i in 1:length(n))
 
-lgth = n(i,1);
+		lgth = n(i,1);
 
 # Moving average function 
 
-y1 = zeros(1,M-lgth+1);
-for (j in 1:M-lgth+1)
-y1 (j) = mean(y(j:j+lgth-1);
-end
-end
+		y1 = zeros(1,M-lgth+1);
+		for (j in 1:M-lgth+1)
+			y1 (j) = mean(y(j:j+lgth-1);
+		end
+	end
 
-       end
+end
 
 function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
 
