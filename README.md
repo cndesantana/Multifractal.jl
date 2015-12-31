@@ -45,7 +45,7 @@ The MFDMA is an approach based detrended moving average (DMA) for multifractal a
 
 
 
-[3}
+[3]
 
 
 # References
