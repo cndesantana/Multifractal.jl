@@ -1,0 +1,7 @@
+dat<-read.csv("./brown.tfa",sep=" ",header=FALSE)
+dat1<-read.csv("./eeg.tfa",sep=" ",header=FALSE)
+png("./figureTFA.png",width=1980,height=1280,res=300)
+plot(dat1$V1, dat1$V4, col= "black", ylab="Fourth column", xlab="First column", ylim=c(0.97,1.02),main="TFA file")
+points(dat$V1, dat$V4, col= "red")
+legend("bottomright",legend=c("EEG","Brownian"),col=c("black","red"),pch=1)
+dev.off()
