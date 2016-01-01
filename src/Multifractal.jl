@@ -142,30 +142,12 @@ end
 #end 
  
 function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q, dq, Dq, RmFa, RmDq, Fout::IOStream, FoutFa::IOStream)
-    AlphaMin=999.0;  
-    AlphaMax=-999.0; 
-    QAlphaMax=-999.0;
-    QAlphaMin=999.0;
-    Fmx=-999.0; 
-    Fmn=999.0;  
-    Dqmx=-999.9;
-    Dqmn= 999.9;
-    qMin=0.0::AbstractFloat;
-    qMax=0.0::AbstractFloat;
-    EDqmn=0.0::AbstractFloat;
-    RDqmn=0.0::AbstractFloat;
-    EDqmx=0.0::AbstractFloat;
-    RDqmx=0.0::AbstractFloat;
-    EAlphaMin=0.0::AbstractFloat;
-    RAlphaMin=0.0::AbstractFloat;	#// Alfa minimo, erro e r2
-    EAlphaMax=0.0::AbstractFloat;
-    RAlphaMax=0.0::AbstractFloat;	#// Alfa maximo, erro e r2
-    D0=0.0::AbstractFloat;
-    RD0=0.0::AbstractFloat;
-    ED0=0.0::AbstractFloat;
-    Alpha0=0.0::AbstractFloat; 
-    EAlpha0=0.0::AbstractFloat;
-    RAlpha0=0.0::AbstractFloat;
+
+    AlphaMin=QAlphaMin=Fmn=Dqmn=999.9::AbstractFloat;
+    AlphaMax=QAlphaMax=Fmx=Dqmx=-999.9;
+    qMin=EDqmn=RDqmn=EAlphaMin=RAlphaMin=0.0::AbstractFloat;	#// Alfa minimo, erro e r2
+    qMax=EDqmx=RDqmx=EAlphaMax=RAlphaMax=0.0::AbstractFloat;	#// Alfa maximo, erro e r2
+    Alpha0=EAlpha0=RAlpha0=D0=RD0=ED0=0.0::AbstractFloat;
     D2=D1=RD1=RD2=ED1=ED2=-1.0;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
     if((FAq.r >= RmFa) && (FFq.r >= RmFa))
@@ -245,31 +227,12 @@ function ChhabraJensen{T}(inputfile::ASCIIString, extensionDq::ASCIIString, exte
     FoutTau = open(NFoutTau,"w+");
     FoutSumm = open(NFoutSumm,"a+");
 
-    AlphaMin=999;  
-    AlphaMax=-999; 
-    QAlphaMax=-999;
-    QAlphaMin=999;
-    Fmx=-999; 
-    Fmn=999;  
-    Dqmx=-999.9;
-    Dqmn= 999.9;
-    qMin=0.0::AbstractFloat;
-    qMax=0.0::AbstractFloat;
-    EDqmn=0.0::AbstractFloat;
-    RDqmn=0.0::AbstractFloat;
-    EDqmx=0.0::AbstractFloat;
-    RDqmx=0.0::AbstractFloat;
-    EAlphaMin=0.0::AbstractFloat;
-    RAlphaMin=0.0::AbstractFloat;	#// Alfa minimo, erro e r2
-    EAlphaMax=0.0::AbstractFloat;
-    RAlphaMax=0.0::AbstractFloat;	#// Alfa maximo, erro e r2
-    D0=0.0::AbstractFloat;
-    RD0=0.0::AbstractFloat;
-    ED0=0.0::AbstractFloat;
-    Alpha0=0.0::AbstractFloat; 
-    EAlpha0=0.0::AbstractFloat;
-    RAlpha0=0.0::AbstractFloat;
-    D2=D1=RD1=RD2=ED1=ED2=-1;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
+    AlphaMin=QAlphaMin=Fmn=Dqmn=999.9::AbstractFloat;
+    AlphaMax=QAlphaMax=Fmx=Dqmx=-999.9;
+    qMin=EDqmn=RDqmn=EAlphaMin=RAlphaMin=0.0::AbstractFloat;	#// Alfa minimo, erro e r2
+    qMax=EDqmx=RDqmx=EAlphaMax=RAlphaMax=0.0::AbstractFloat;	#// Alfa maximo, erro e r2
+    Alpha0=EAlpha0=RAlpha0=D0=RD0=ED0=0.0::AbstractFloat;
+    D2=D1=RD1=RD2=ED1=ED2=-1.0;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
 #;#    /* Fix the size of the file, the maximum and minimum */
     Md = zeros(round(Int,((Qf-Qi)/dq)+1),Np+1);
@@ -320,10 +283,7 @@ function ChhabraJensen{T}(inputfile::ASCIIString, extensionDq::ASCIIString, exte
                     end
                     mq = (m^q)/Nor;					#// To estimate f(alfa)
                     currentval = Ma[k-I+1]::AbstractFloat;
-                    pos2 = k-I+1;
                     setindex!(Ma,currentval + mq*log10(m),k-I+1);
-                    val2 = Ma[k-I+1]; 
-
                     currentval = Mf[k-I+1]::AbstractFloat;
                     setindex!(Mf,currentval + mq*log10(mq),k-I+1);
                 end #end-if
