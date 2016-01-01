@@ -1,7 +1,7 @@
 using Multifractal 
 using Benchmarks
 
-function main(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, initialQ::Float64, finalQ::Float64, dq::Float64, Np::Int64, r2dq::Float64, r2fa::Float64, scalesToRemove::Int64)
+function main(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, initialQ, finalQ, dq, Np, r2dq, r2fa, scalesToRemove::Int64)
 
 #;#Load the data
     data = readdlm(inputfile,' ');

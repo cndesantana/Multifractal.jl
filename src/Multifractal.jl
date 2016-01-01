@@ -14,7 +14,7 @@ type Hstc
 end
 Hstc(sl,sd,r,in,ea,eb) = Hstc(sl,sd,r,in,ea,eb);
 
-function printPartitionFunction(FoutTau::IOStream, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, mye::Array{Float64,1}, Md::Array{Float64,2})
+function printPartitionFunction(FoutTau::IOStream, Qi, Qf, dq, Np, mye::Array{Float64,1}, Md::Array{Float64,2})
 
     line = "Scale";
     @inbounds @simd for(q in Qi:dq:Qf) 
@@ -38,29 +38,32 @@ end
 function MFDFA()
 end
 
-function MFDMA(x,n_min,n_max,N,theta,q)
-       M = lenght(x);
-       MIN = log10(n_min);
-       Max = log10(n_max);
-# n = (unique(round(logspace(MIN,MAX,N)))' to translate
-
-# To build a cumulative sum of the vector y
-
-	y = cumsum(x);
-
-	for (i in 1:length(n))
-
-		lgth = n(i,1);
-
-# Moving average function 
-
-		y1 = zeros(1,M-lgth+1);
-		for (j in 1:M-lgth+1)
-			y1 (j) = mean(y(j:j+lgth-1);
-		end
-	end
-
-end
+#Great work, Lucas! :) That is the way to do it!
+#I am commenting the function just to test some changes I am doing. 
+#
+#function MFDMA(x,n_min,n_max,N,theta,q)
+#       M = lenght(x);
+#       MIN = log10(n_min);
+#       Max = log10(n_max);
+## n = (unique(round(logspace(MIN,MAX,N)))' to translate
+#
+## To build a cumulative sum of the vector y
+#
+#	y = cumsum(x);
+#
+#	for (i in 1:length(n))
+#
+#		lgth = n(i,1);
+#
+## Moving average function 
+#
+#		y1 = zeros(1,M-lgth+1);
+#		for (j in 1:M-lgth+1)
+#			y1 (j) = mean(y(j:j+lgth-1);
+#		end
+#	end
+#
+#end
 
 function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
 
@@ -109,7 +112,7 @@ function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
     return Hstc(a,w,r,b,sa,sb)
 end
 
-function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Float64, N::Int64)
+function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei, Ef, N::Int64)
     mysum=0.0::Float64;
     i=1
     @inbounds while i<=N && x[i]<=Ei i+=1 ; end
@@ -119,7 +122,7 @@ function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Flo
     return(mysum);
 end 
 
-#function calcSumM2(x::Array{Float64,1}, y::Array{Float64,1}, Ei::Float64, Ef::Float64, N::Int64)
+#function calcSumM2(x::Array{Float64,1}, y::Array{Float64,1}, Ei, Ef, N::Int64)
 #    ret=0.0::Float64;
 #    for(i in 1:N)
 #        if( Ei < x[i] <= Ef)
@@ -138,7 +141,7 @@ end
 #    return mysum
 #end 
  
-function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64, dq::Float64, Dq::Float64, RmFa::Float64, RmDq::Float64, Fout::IOStream, FoutFa::IOStream)
+function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q, dq, Dq, RmFa, RmDq, Fout::IOStream, FoutFa::IOStream)
     AlphaMin=999.0;  
     AlphaMax=-999.0; 
     QAlphaMax=-999.0;
@@ -231,7 +234,7 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q::Float64
 
 end
 
-function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, x::Array{Float64,1}, y::Array{Float64,1}, Qi::Float64, Qf::Float64, dq::Float64, Np::Int64, RmDq::Float64, RmFa::Float64, Io::Int64)
+function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, x::Array{Float64,1}, y::Array{Float64,1}, Qi, Qf, dq, Np, RmDq, RmFa, Io::Int64)
     
     NFout = Chext(inputfile,extensionDq);
     NFoutFA = Chext(inputfile,extensionFa);
