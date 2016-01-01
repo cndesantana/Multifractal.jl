@@ -5,16 +5,16 @@ module Multifractal
 using Vega
 
 type Hstc 
-    sl::Float64
-    sd::Float64
-    r::Float64
-    in::Float64
-    ea::Float64
-    eb::Float64
+    sl::AbstractFloat
+    sd::AbstractFloat
+    r::AbstractFloat
+    in::AbstractFloat
+    ea::AbstractFloat
+    eb::AbstractFloat
 end
 Hstc(sl,sd,r,in,ea,eb) = Hstc(sl,sd,r,in,ea,eb);
 
-function printPartitionFunction(FoutTau::IOStream, Qi, Qf, dq, Np, mye::Array{Float64,1}, Md::Array{Float64,2})
+function printPartitionFunction{T}(FoutTau::IOStream, Qi::T, Qf::T, dq::T, Np::Integer, mye::Vector{T}, Md::Matrix{T})
 
     line = "Scale";
     @inbounds @simd for(q in Qi:dq:Qf) 
@@ -65,10 +65,10 @@ end
 #
 #end
 
-function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
+function fitting{T}(vx::Vector{T}, vy::Vector{T}, N::Integer)
 
     for x = [:s,:sx,:sy,:sx2,:sxy,:sy2,:a,:b,:r,:rx,:ry,:w,:sa,:sb]
-        @eval $x = Float64;
+        @eval $x = AbstractFloat;
     end
     sx=0.0;
     sy=0.0;
@@ -112,8 +112,8 @@ function fitting(vx::Array{Float64,1}, vy::Array{Float64,1}, N::Int64)
     return Hstc(a,w,r,b,sa,sb)
 end
 
-function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei, Ef, N::Int64)
-    mysum=0.0::Float64;
+function calcSumM{T}(x::Vector{T}, y::Vector{T}, Ei::T, Ef::T, N::Integer)
+    mysum=0.0::AbstractFloat;
     i=1
     @inbounds while i<=N && x[i]<=Ei i+=1 ; end
     j=i
@@ -122,8 +122,8 @@ function calcSumM(x::Array{Float64,1}, y::Array{Float64,1}, Ei, Ef, N::Int64)
     return(mysum);
 end 
 
-#function calcSumM2(x::Array{Float64,1}, y::Array{Float64,1}, Ei, Ef, N::Int64)
-#    ret=0.0::Float64;
+#function calcSumM2(x::Vector{T}, y::Vector{T}, Ei::T, Ef::T, N::Integer)
+#    ret=0.0::AbstractFloat;
 #    for(i in 1:N)
 #        if( Ei < x[i] <= Ef)
 #            ret += y[i];
@@ -132,7 +132,7 @@ end
 #    return ret;
 #end
 #   
-#function calcSumM3{T}(x::Vector{T}, y::Vector{T}, Ei::T, Ef::T, N::Int64)
+#function calcSumM3{T}(x::Vector{T}, y::Vector{T}, Ei::T, Ef::T, N::Integer)
 #    mysum = zero(T)
 #    @inbounds @simd for i in eachindex(x, y)
 #         mysum += ifelse(Ei < x[i] <= Ef, y[i], zero(T)) 
@@ -150,22 +150,22 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q, dq, Dq,
     Fmn=999.0;  
     Dqmx=-999.9;
     Dqmn= 999.9;
-    qMin=0.0::Float64;
-    qMax=0.0::Float64;
-    EDqmn=0.0::Float64;
-    RDqmn=0.0::Float64;
-    EDqmx=0.0::Float64;
-    RDqmx=0.0::Float64;
-    EAlphaMin=0.0::Float64;
-    RAlphaMin=0.0::Float64;	#// Alfa minimo, erro e r2
-    EAlphaMax=0.0::Float64;
-    RAlphaMax=0.0::Float64;	#// Alfa maximo, erro e r2
-    D0=0.0::Float64;
-    RD0=0.0::Float64;
-    ED0=0.0::Float64;
-    Alpha0=0.0::Float64; 
-    EAlpha0=0.0::Float64;
-    RAlpha0=0.0::Float64;
+    qMin=0.0::AbstractFloat;
+    qMax=0.0::AbstractFloat;
+    EDqmn=0.0::AbstractFloat;
+    RDqmn=0.0::AbstractFloat;
+    EDqmx=0.0::AbstractFloat;
+    RDqmx=0.0::AbstractFloat;
+    EAlphaMin=0.0::AbstractFloat;
+    RAlphaMin=0.0::AbstractFloat;	#// Alfa minimo, erro e r2
+    EAlphaMax=0.0::AbstractFloat;
+    RAlphaMax=0.0::AbstractFloat;	#// Alfa maximo, erro e r2
+    D0=0.0::AbstractFloat;
+    RD0=0.0::AbstractFloat;
+    ED0=0.0::AbstractFloat;
+    Alpha0=0.0::AbstractFloat; 
+    EAlpha0=0.0::AbstractFloat;
+    RAlpha0=0.0::AbstractFloat;
     D2=D1=RD1=RD2=ED1=ED2=-1.0;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
     if((FAq.r >= RmFa) && (FFq.r >= RmFa))
@@ -234,7 +234,7 @@ function getMultifractalCoefficients(FAq::Hstc, FFq::Hstc, FDq::Hstc, q, dq, Dq,
 
 end
 
-function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, x::Array{Float64,1}, y::Array{Float64,1}, Qi, Qf, dq, Np, RmDq, RmFa, Io::Int64)
+function ChhabraJensen{T}(inputfile::ASCIIString, extensionDq::ASCIIString, extensionFa::ASCIIString, extensionTau::ASCIIString, x::Vector{T}, y::Vector{T}, Qi::T, Qf::T, dq::T, Np::Integer, RmDq::T, RmFa::T, Io::Integer)
     
     NFout = Chext(inputfile,extensionDq);
     NFoutFA = Chext(inputfile,extensionFa);
@@ -253,22 +253,22 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
     Fmn=999;  
     Dqmx=-999.9;
     Dqmn= 999.9;
-    qMin=0.0::Float64;
-    qMax=0.0::Float64;
-    EDqmn=0.0::Float64;
-    RDqmn=0.0::Float64;
-    EDqmx=0.0::Float64;
-    RDqmx=0.0::Float64;
-    EAlphaMin=0.0::Float64;
-    RAlphaMin=0.0::Float64;	#// Alfa minimo, erro e r2
-    EAlphaMax=0.0::Float64;
-    RAlphaMax=0.0::Float64;	#// Alfa maximo, erro e r2
-    D0=0.0::Float64;
-    RD0=0.0::Float64;
-    ED0=0.0::Float64;
-    Alpha0=0.0::Float64; 
-    EAlpha0=0.0::Float64;
-    RAlpha0=0.0::Float64;
+    qMin=0.0::AbstractFloat;
+    qMax=0.0::AbstractFloat;
+    EDqmn=0.0::AbstractFloat;
+    RDqmn=0.0::AbstractFloat;
+    EDqmx=0.0::AbstractFloat;
+    RDqmx=0.0::AbstractFloat;
+    EAlphaMin=0.0::AbstractFloat;
+    RAlphaMin=0.0::AbstractFloat;	#// Alfa minimo, erro e r2
+    EAlphaMax=0.0::AbstractFloat;
+    RAlphaMax=0.0::AbstractFloat;	#// Alfa maximo, erro e r2
+    D0=0.0::AbstractFloat;
+    RD0=0.0::AbstractFloat;
+    ED0=0.0::AbstractFloat;
+    Alpha0=0.0::AbstractFloat; 
+    EAlpha0=0.0::AbstractFloat;
+    RAlpha0=0.0::AbstractFloat;
     D2=D1=RD1=RD2=ED1=ED2=-1;	#// -1 indicates that for the especific q (2 or 1) the R was not calculated
 
 #;#    /* Fix the size of the file, the maximum and minimum */
@@ -293,9 +293,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
         Ma = zeros(Np+1);
         Mf = zeros(Np+1);
         @inbounds @simd for(k in I:Np)						#// Loop for partition numbers
-            Nor=0.0::Float64;
-            m=0.0::Float64;
-            Pr=0::Int64;
+            Nor=0.0::AbstractFloat;
+            m=0.0::AbstractFloat;
+            Pr=0::Integer;
             Pr = 2^(k-1);
             E = 1.0/Pr;						#// Size of each partition
             mye[k-I+1] = log10(E);
@@ -312,19 +312,19 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
             @inbounds @simd for(i in 1:Pr) #// loop for scan over the partition
                 m = calcSumM(x,y,(i-1)*E,i*E,N)/SomaY;
                 if(m!=0)		        #// Evita divergencias de medidas nulas
-                    currentval = Md[round(Int,(q-Qi)/dq)+1,k-I+1]::Float64;
+                    currentval = Md[round(Int,(q-Qi)/dq)+1,k-I+1]::AbstractFloat;
                     if( (1-dq/2) < q < (1+dq/2) )
                         setindex!(Md,currentval + m*log10(m)/Nor,round(Int,(q-Qi)/dq)+1,k-I+1)
                     else    
                         setindex!(Md,currentval + m^q,round(Int,(q-Qi)/dq)+1,k-I+1)
                     end
                     mq = (m^q)/Nor;					#// To estimate f(alfa)
-                    currentval = Ma[k-I+1]::Float64;
+                    currentval = Ma[k-I+1]::AbstractFloat;
                     pos2 = k-I+1;
                     setindex!(Ma,currentval + mq*log10(m),k-I+1);
                     val2 = Ma[k-I+1]; 
 
-                    currentval = Mf[k-I+1]::Float64;
+                    currentval = Mf[k-I+1]::AbstractFloat;
                     setindex!(Mf,currentval + mq*log10(mq),k-I+1);
                 end #end-if
             end #end-for
@@ -338,9 +338,9 @@ function ChhabraJensen(inputfile::ASCIIString, extensionDq::ASCIIString, extensi
         FFq = fitting(mye,Mf,Np);
         FDq = fitting(mye,Md'[:,round(Int,(q-Qi)/dq)+1],Np);
         if( (1-dq/2) < q < (1+dq/2) )
-            Dq = FDq.sl::Float64;
+            Dq = FDq.sl::AbstractFloat;
         else 
-            Dq = FDq.sl/(q-1)::Float64;
+            Dq = FDq.sl/(q-1)::AbstractFloat;
             FDq.sd /= abs(q-1);
         end
 
