@@ -46,7 +46,7 @@ end
 #function MFDMA(x,n_min,n_max,N,theta,q)
 #       M = lenght(x);
 #       MIN = log10(n_min);
-#       Max = log10(n_max);
+#       MAX = log10(n_max);
 ## n = (unique(round(logspace(MIN,MAX,N)))' How sould we translate this fragment?
 #
 ## To build a cumulative sum of the vector y
