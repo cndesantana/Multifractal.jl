@@ -62,7 +62,50 @@ end
 #			y1 (j) = mean(y(j:j+lgth-1);
 #		end
 #	end
+#    Determine the residual e
+#    e=y(max(1,floor(lgth*(1-theta))):max(1,floor(lgth*(1-theta)))+length(y1)-1)-y1;
+#    
+#    Estimate the root-mean-square function F
+#    for (k in 1:floor(length(e)/lgth))
+#        F{i}(k)=sqrt(mean(e((k-1)*lgth+1:k*lgth).^2));
+#    end
+#end
 #
+#
+# Calculate the q-th order overall fluctuation function Fq
+#for (i in 1:length(q))
+#    for (j in 1:length(F))
+#        f=F{j};
+#        if q(i) == 0
+#            Fq(j,i)=exp(0.5*mean(log(f.^2)));
+#        else
+#            Fq(j,i)=(mean(f.^q(i)))^(1/q(i));
+#        end
+#    end
+#end
+
+
+#Calculate the multifractal scaling exponent tau(q)
+#for (i in 1:size(Fq,2))
+#    fq=Fq(:,i);
+#    r=regstats(log(fq),log(n),'linear',{'tstat'});
+#    k=r.tstat.beta(2);
+#    h(i,1)=k;
+#end
+#tau=h.*q'-1;
+
+
+#Calculate the singularity strength function alpha(q) and spectrum f(alpha) 
+#dx=7;
+#dx=fix((dx-1)/2);
+#for (i in dx+1:length(tau)-dx)
+#    xx=q(i-dx:i+dx);
+#    yy=tau(i-dx:i+dx);
+#    r=regstats(yy,xx,'linear',{'tstat'});
+#    alpha(i,1)=r.tstat.beta(2);
+#end
+#alpha=alpha(dx+1:end);
+#f=q(dx+1:end-dx)'.*alpha-tau(dx+1:end-dx);
 #end
 
 function fitting{T}(vx::Vector{T}, vy::Vector{T}, N::Integer)
