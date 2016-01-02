@@ -3,6 +3,8 @@
 module Multifractal 
 
 using Vega
+using GLM
+using DataFrames
 
 type Hstc 
     sl::AbstractFloat
@@ -45,7 +47,7 @@ end
 #       M = lenght(x);
 #       MIN = log10(n_min);
 #       Max = log10(n_max);
-## n = (unique(round(logspace(MIN,MAX,N)))' to translate
+## n = (unique(round(logspace(MIN,MAX,N)))' How sould we translate this fragment?
 #
 ## To build a cumulative sum of the vector y
 #
@@ -75,7 +77,7 @@ end
 # Calculate the q-th order overall fluctuation function Fq
 #for (i in 1:length(q))
 #    for (j in 1:length(F))
-#        f=F{j};
+#        f=F(j);
 #        if q(i) == 0
 #            Fq(j,i)=exp(0.5*mean(log(f.^2)));
 #        else
@@ -87,10 +89,12 @@ end
 
 #Calculate the multifractal scaling exponent tau(q)
 #for (i in 1:size(Fq,2))
-#    fq=Fq(:,i);
-#    r=regstats(log(fq),log(n),'linear',{'tstat'});
-#    k=r.tstat.beta(2);
-#    h(i,1)=k;
+#	fq=Fq(:,i);
+#	data = DataFrame(log(fq),log(n));
+#	OLS = glm(Y~X,data,Normal(),IdentityLink())
+
+#	k=r.tstat.beta(2); to translate the slope
+#	h(i,1)=k;
 #end
 #tau=h.*q'-1;
 
