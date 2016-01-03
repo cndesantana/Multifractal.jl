@@ -40,9 +40,9 @@ end
 function MFDFA()
 end
 
-#Great work, Lucas! :) That is the way to do it!
-#I am commenting the function just to test some changes I am doing. 
-#
+#######Great work, Lucas! :) That is the way to do it!
+#######I am commenting the function just to test some changes I am doing. 
+#######
 ######function MFDMA(x,n_min,n_max,N,theta,q)
 ######    M = lenght(x);
 ######    MIN = log10(n_min);
@@ -68,48 +68,49 @@ end
 ######            push!(Fi,sqrt(mean(e((k-1)*lgth+1:k*lgth).^2)));#to fulfill a vector dynamically you can use the function push!
 ######        end#end-fork
 ######    end#end-fori
-#
-#
-#
-#Calculate the q-th order overall fluctuation function Fq
-#    for (i in 1:length(q))
-#        for (j in 1:length(F))
-#            f=F[j];
-#            if q[i] == 0
-#                Fq[j,i]=exp(0.5*mean(log(f.^2)));
-#            else
-#                Fq[j,i]=(mean(f^q[i]))^(1/q(i));
-#            end
-#        end
-#    end
-#
-#
-#    Calculate the multifractal scaling exponent tau(q)
-#    for (i in 1:size(Fq,2))
-#    	fq=Fq[:,i];
-#    	data = DataFrame(log(fq),log(n));
-#    	OLS = glm(Y~X,data,Normal(),IdentityLink());
-#       res = coef(OLS);
-#    	k=res[2];
-#    	h[i,1]=k;
-#    end
-#    tau=h.*q'-1;
-#
-#
-#    Calculate the singularity strength function alpha(q) and spectrum f(alpha) 
-#    dx=7;
-#    dx=fix((dx-1)/2);
-#    for (i in dx+1:length(tau)-dx)
-#       xx=q[i-dx:i+dx];
-#       yy=tau[i-dx:i+dx];
-#    	data = DataFrame(xx,yy);
-#       OLS = glm(Y~X,data,Normal(),IdentityLink());
-#       res = coef(OLS);
-#    	alpha[i,1]=res[2];
-#    end
-#    alpha=alpha(dx+1:end);
-#    f=q(dx+1:end-dx)'.*alpha-tau(dx+1:end-dx);
-#end
+######
+######
+######
+#######Calculate the q-th order overall fluctuation function Fq
+######    Fq = zeros(length(F),length(q));#initializing the matrix Fq
+######    for (i in 1:length(q))
+######        for (j in 1:length(F))
+######            f=F[j];#is 'f' a scalar value or a vector?
+######            if q[i] == 0
+######                Fq[j,i]=exp(0.5*mean(log(f.^2)));#we use .^ when we are working with vectors. But, as far as I understand, f is a value and not a vector. If I am right here, why do we need to calculate the mean of a scalar value?  
+######            else
+######                Fq[j,i]=(mean(f.^q[i]))^(1/q(i));#as far as I understand, both, f and q[i], are scalar values. So I assume we don't need to use .^. Also, I don't get why we should calculate a mean here, if the parameter of the mean function is a scalar value.
+######            end
+######        end
+######    end
+######
+######
+#######    Calculate the multifractal scaling exponent tau(q)
+######    for (i in 1:(size(Fq,2)))#should we use 'length(q)' instead of 'size(Fq,2)'?
+######    	fq=Fq[:,i];
+######    	data = DataFrame(log(fq),log(n));
+######    	OLS = glm(Y~X,data,Normal(),IdentityLink());#who are 'Y' and 'X'? Shouldn't be 'y' and 'x' instead?
+######       res = coef(OLS);
+######    	k=res[2];
+######    	h[i,1]=k;#who is 'k'? Is it a matrix? What are its dimensions? We should initialize it before using
+######    end
+######    tau=h.*q'-1;#why are we using the transpose of q? Also, is tau a vector, a matrix or a scalar? (I suppose it is a vector). 
+######
+######
+#######    Calculate the singularity strength function alpha(q) and spectrum f(alpha) 
+######    dx=7;
+######    dx=fix((dx-1)/2);
+######    for (i in (dx+1):(length(tau)-dx))
+######       xx=q[i-dx:i+dx];
+######       yy=tau[i-dx:i+dx];
+######    	data = DataFrame(xx,yy);
+######       OLS = glm(Y~X,data,Normal(),IdentityLink());
+######       res = coef(OLS);
+######    	alpha[i,1]=res[2];
+######    end
+######    alpha=alpha[dx+1:end];
+######    f=q[dx+1:end-dx]'.*alpha - tau[dx+1:end-dx];#ok, I see tau is a vector :) Again, why are we using the transpose of the vector q?
+######end
 
 function fitting{T}(vx::Vector{T}, vy::Vector{T}, N::Integer)
 
