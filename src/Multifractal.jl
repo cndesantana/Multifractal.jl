@@ -37,35 +37,30 @@ function Chext(filename,extension)
     return(split(filename,'.')[1]*"."*extension);
 end
 
-function MFDFA()
-end
+function MFDMA(x,n_min,n_max,N,theta,q)
+    M = length(x);
+    MIN = log10(n_min);
+    MAX = log10(n_max);
+    n = unique(round(logspace(MIN,MAX,N)))
 
-#Great work, Lucas! :) That is the way to do it!
-#I am commenting the function just to test some changes I am doing. 
-#
-#function MFDMA(x,n_min,n_max,N,theta,q)
-#       M = lenght(x);
-#       MIN = log10(n_min);
-#       MAX = log10(n_max);
-## n = (unique(round(logspace(MIN,MAX,N)))' How sould we translate this fragment?
-#
 ## To build a cumulative sum of the vector y
-#
-#	y = cumsum(x);
-#
-#	for (i in 1:length(n))
-#
-#		lgth = n(i,1);
-#
+   
+    y = cumsum(x);
+
+    for (i in 1:length(n))
+
+    	lgth = n[i,1];
+
 ## Moving average function 
-#
-#		y1 = zeros(1,M-lgth+1);
-#		for (j in 1:M-lgth+1)
-#			y1 (j) = mean(y(j:j+lgth-1);
-#		end
-#	end
+
+    	y1 = zeros(1,M-lgth+1);
+	for (j in 1:M-lgth+1)
+		y1[j] = mean(y[j:j+lgth-1]);
+	end
+     end	
+
 #    Determine the residual e
-#    e=y(max(1,floor(lgth*(1-theta))):max(1,floor(lgth*(1-theta)))+length(y1)-1)-y1;
+#    e=y[max(1,floor(lgth*(1-theta))):max(1,floor(lgth*(1-theta)))+length(y1)-1]-y1;
 #    
 #    Estimate the root-mean-square function F
 #    for (k in 1:floor(length(e)/lgth))
@@ -111,7 +106,7 @@ end
 #end
 #alpha=alpha(dx+1:end);
 #f=q(dx+1:end-dx)'.*alpha-tau(dx+1:end-dx);
-#end
+end
 
 function fitting{T}(vx::Vector{T}, vy::Vector{T}, N::Integer)
 
