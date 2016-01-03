@@ -92,6 +92,7 @@ end
 #	fq=Fq(:,i);
 #	data = DataFrame(log(fq),log(n));
 #	OLS = glm(Y~X,data,Normal(),IdentityLink());
+#
 #   res = coef(OLS);
 #	k=res[2];
 #	h[i,1]=k;
