@@ -55,21 +55,21 @@ end
 #
 #	for (i in 1:length(n))
 #
-#		lgth = n(i,1);
+#		lgth = n[i,1];
 #
 ## Moving average function 
 #
 #		y1 = zeros(1,M-lgth+1);
 #		for (j in 1:M-lgth+1)
-#			y1 (j) = mean(y(j:j+lgth-1);
+#			y1 [j] = mean(y(j:j+lgth-1);
 #		end
 #	end
 #    Determine the residual e
-#    e=y(max(1,floor(lgth*(1-theta))):max(1,floor(lgth*(1-theta)))+length(y1)-1)-y1;
+#    e=y[max(1,floor(lgth*(1-theta))):max(1,floor(lgth*(1-theta)))+length(y1)-1]-y1;
 #    
 #    Estimate the root-mean-square function F
 #    for (k in 1:floor(length(e)/lgth))
-#        F{i}(k)=sqrt(mean(e((k-1)*lgth+1:k*lgth).^2));
+#        F{i}[k]=sqrt(mean(e((k-1)*lgth+1:k*lgth).^2));
 #    end
 #end
 #
@@ -89,10 +89,9 @@ end
 
 #Calculate the multifractal scaling exponent tau(q)
 #for (i in 1:size(Fq,2))
-#	fq=Fq(:,i);
+#	fq=Fq[:,i];
 #	data = DataFrame(log(fq),log(n));
 #	OLS = glm(Y~X,data,Normal(),IdentityLink());
-#
 #   res = coef(OLS);
 #	k=res[2];
 #	h[i,1]=k;
@@ -104,10 +103,12 @@ end
 #dx=7;
 #dx=fix((dx-1)/2);
 #for (i in dx+1:length(tau)-dx)
-#    xx=q(i-dx:i+dx);
-#    yy=tau(i-dx:i+dx);
-#    r=regstats(yy,xx,'linear',{'tstat'});
-#    alpha(i,1)=r.tstat.beta(2);
+#   xx=q[i-dx:i+dx];
+#   yy=tau[i-dx:i+dx];
+#	data = DataFrame(xx,yy);
+#   OLS = glm(Y~X,data,Normal(),IdentityLink());
+#   res = coef(OLS);
+#	alpha[i,1]=res[2];
 #end
 #alpha=alpha(dx+1:end);
 #f=q(dx+1:end-dx)'.*alpha-tau(dx+1:end-dx);
