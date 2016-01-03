@@ -77,11 +77,11 @@ end
 # Calculate the q-th order overall fluctuation function Fq
 #for (i in 1:length(q))
 #    for (j in 1:length(F))
-#        f=F(j);
-#        if q(i) == 0
-#            Fq(j,i)=exp(0.5*mean(log(f.^2)));
+#        f=F[j];
+#        if q[i] == 0
+#            Fq[j,i]=exp(0.5*mean(log(f.^2)));
 #        else
-#            Fq(j,i)=(mean(f.^q(i)))^(1/q(i));
+#            Fq[j,i]=(mean(f.^q(i)))^(1/q(i));
 #        end
 #    end
 #end
@@ -91,10 +91,10 @@ end
 #for (i in 1:size(Fq,2))
 #	fq=Fq(:,i);
 #	data = DataFrame(log(fq),log(n));
-#	OLS = glm(Y~X,data,Normal(),IdentityLink())
-
-#	k=r.tstat.beta(2); to translate the slope
-#	h(i,1)=k;
+#	OLS = glm(Y~X,data,Normal(),IdentityLink());
+#   res = coef(OLS);
+#	k=res[2];
+#	h[i,1]=k;
 #end
 #tau=h.*q'-1;
 
