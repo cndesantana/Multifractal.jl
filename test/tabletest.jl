@@ -2,24 +2,15 @@
 #I am commenting the function just to test some changes I am doing. 
 #
 
-using Multifractal
 using GLM
 using DataFrames
 using Vega
-
-function main(x,n_min,n_max,N,theta,q)
-
-MFDMA(x,n_min,n_max,N,theta,q)
-
-end
 
 data = readdlm("brown.txt",' ');
 x = data[:,2];
 q_ = collect(-5.0:0.1:5.0);
 x,n_min,n_max,N,theta,q = x,10,100,30,0,q_
 x,n_min,n_max,N,theta,q = x,10,100,30,0,q_
-
-main (x,10,100,30,0,q_)
 
 function float_to_integer(n)
    aux = Array(Integer, 0);
