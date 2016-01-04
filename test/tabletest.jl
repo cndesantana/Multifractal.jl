@@ -30,7 +30,8 @@ function MFDMA(x,n_min,n_max,N,theta,q)
 
     # To build a cumulative sum of the vector y
     y = cumsum(x);
-    
+       
+    F=Array{AbstractFloat}[];#initialize the matrix F as an Array of Arrays of Float
     for (i in 1:length(n))
         lgth = n[i];
         # Moving average function 
@@ -41,10 +42,12 @@ function MFDMA(x,n_min,n_max,N,theta,q)
 #       Determine the residual e
         residuals_=y[max(1,floor(lgth*(1-theta))):(max(1,floor(lgth*(1-theta)))+length(y1)-1)]-y1;
 #       Estimate the root-mean-square function F
-        F=[];#initialize the variable F
+        Fi = Array(AbstractFloat,0);#initialize the vector Fi as an Array of Float
         for (k in 1:convert(Integer,(floor(length(residuals_)/lgth))))
-            push!(F,sqrt(mean(residuals_[(k-1)*lgth+1:k*lgth].^2)));#to fulfill a vector dynamically you can use the function push!
+            push!(Fi,sqrt(mean(residuals_[(k-1)*lgth+1:k*lgth].^2)));#to fulfill a vector dynamically you can use the function push!
         end#end-fork
+        push!(F,Fi);
+    end#end-fori
 
 #Calculate the q-th order overall fluctuation function Fq
     Fq = zeros(length(F),length(q));#initializing the matrix Fq
@@ -66,12 +69,14 @@ function MFDMA(x,n_min,n_max,N,theta,q)
     for (k in 1:length(q)) #should we use 'length(q)' instead of 'size(Fq,2)'?
 
 # I don't know!
+# I guess we can use any of them, I was just asking if there was a specific reason to use size(Fq,2) (the number of columns of matrix Fq). 
 
     	fq = Fq[:,k];
     	data = DataFrames.DataFrame(log(fq),log(n));
     	OLS = GLM.glm(Y~X,data,Normal(),IdentityLink());#who are 'Y' and 'X'? Shouldn't be 'y' and 'x' instead? 
 
 #It is a parameter of the function glm. It means that I want a function of the type y = ax + b on my regressive model.
+#Charles: Ok, I got it. But why are you using Upper case 'Y' and Upper case 'X' instead of Lower case 'y' and Lower case 'x'? The Upper case variables don't exist. I will assume that we can replace 'Y' and 'X' by 'y' and 'x'.
         res = coef(OLS);
       	h[k]=res[2];
     end
