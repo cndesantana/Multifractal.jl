@@ -33,6 +33,14 @@ function printPartitionFunction{T}(FoutTau::IOStream, Qi::T, Qf::T, dq::T, Np::I
     end
 end
 
+function float_to_integer(n)
+   aux = Array(Integer, 0);
+   for(i in n)
+      push!(aux,convert(Integer,i));
+   end
+   return aux; 
+end
+
 function Chext(filename,extension)
     return(split(filename,'.')[1]*"."*extension);
 end
