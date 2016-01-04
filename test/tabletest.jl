@@ -60,6 +60,8 @@ function MFDMA(x,n_min,n_max,N,theta,q)
     end
 
 
+
+#####I AM HERE
 #    Calculate the multifractal scaling exponent tau(q)
     for (k in 1:length(q))#should we use 'length(q)' instead of 'size(Fq,2)'?
     	fq = Fq[:,k];
