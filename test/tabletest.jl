@@ -24,7 +24,7 @@ function MFDMA(x,n_min,n_max,N,theta,q)
     M = length(x);
     MIN = log10(n_min);
     MAX = log10(n_max);
-    # n = (unique(round(logspace(MIN,MAX,N)))' How sould we translate this fragment?
+
     n = unique(round(logspace(MIN,MAX,N)))
     n = float_to_integer(n); 
 
@@ -32,12 +32,12 @@ function MFDMA(x,n_min,n_max,N,theta,q)
     y = cumsum(x);
     
     for (i in 1:length(n))
-        lgth = n[i];#in Julia, a vector is not a matrix with one column like in Matlab :)
+        lgth = n[i];
         # Moving average function 
-        y1 = zeros(M-lgth+1);#in Julia, a vector is not a matrix with one column like in Matlab :)
+        y1 = zeros(M-lgth+1);
         for (j in 1:(M-lgth+1))
-            y1[j] = mean(y[j:(j+lgth-1)]);#in Julia, the index of a vector is defined between '[' and ']'. 
-        end#end-forj
+            y1[j] = mean(y[j:(j+lgth-1)]);
+        end #end-forj
 #       Determine the residual e
         residuals_=y[max(1,floor(lgth*(1-theta))):(max(1,floor(lgth*(1-theta)))+length(y1)-1)]-y1;
 #       Estimate the root-mean-square function F
