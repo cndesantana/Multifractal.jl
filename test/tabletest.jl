@@ -63,16 +63,20 @@ function MFDMA(x,n_min,n_max,N,theta,q)
 
 #####I AM HERE
 #    Calculate the multifractal scaling exponent tau(q)
-    for (k in 1:length(q))#should we use 'length(q)' instead of 'size(Fq,2)'?
+    for (k in 1:length(q)) #should we use 'length(q)' instead of 'size(Fq,2)'?
+
+# I don't know!
+
     	fq = Fq[:,k];
     	data = DataFrames.DataFrame(log(fq),log(n));
-    	OLS = GLM.glm(Y~X,data,Normal(),IdentityLink());#who are 'Y' and 'X'? Shouldn't be 'y' and 'x' instead?
-        res = coef(OLS);
-    	k=res[2];
-    	h[k,1]=k;#who is 'k'? Is it a matrix? What are its dimensions? We should initialize it before using
-    end
-    tau=h.*q'-1;#why are we using the transpose of q? Also, is tau a vector, a matrix or a scalar? (I suppose it is a vector). 
+    	OLS = GLM.glm(Y~X,data,Normal(),IdentityLink());#who are 'Y' and 'X'? Shouldn't be 'y' and 'x' instead? 
 
+#It is a parameter of the function glm. It means that I want a function of the type y = ax + b on my regressive model.
+        res = coef(OLS);
+      	h[k]=res[2];
+    end
+    
+    tau=h.*q-1;
 
 #    Calculate the singularity strength function alpha(q) and spectrum f(alpha) 
     dx=7;
@@ -86,6 +90,6 @@ function MFDMA(x,n_min,n_max,N,theta,q)
     	alpha[i,1]=res[2];
     end
     alpha=alpha[dx+1:end];
-    f=q[dx+1:end-dx]'.*alpha - tau[dx+1:end-dx];#ok, I see tau is a vector :) Again, why are we using the transpose of the vector q?
+    f=q[dx+1:end-dx].*alpha - tau[dx+1:end-dx];
 end
 
