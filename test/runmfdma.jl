@@ -1,8 +1,6 @@
 using Multifractal
 
-function main(x::Array{Float64,1},n_min::Int32,n_max::Int32,
-N::Int32,theta::FloatRange{Float64}
-,q::Int32)
+function main(x,n_min,n_max,N,theta,q)
 
 Multifractal.MFDMA(x,n_min,n_max,N,theta,q)
 
