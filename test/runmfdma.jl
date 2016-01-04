@@ -10,5 +10,6 @@ end
 
 data = readdlm("brown.txt",' ');
 x = data[:,2];
+q_ = collect(-5.0:0.1:5.0);
 
-main (x,10,100,30,-5.0:0.1:5.0,2)
+main (x,10,100,30,0,q_)
